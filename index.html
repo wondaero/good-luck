@@ -57,10 +57,14 @@
                 
                 let rdmNum = 0; //접근 못하게
                 let stage = 0; //접근 못하게
+                let oldStage = 0;
+                let oldPer = 0;
 
                 t.init = function(){
                     stage = 0;
                     rdmNum = 0;
+                    oldStage = 0;
+                    oldPer = 0;
 
                     stageTag.innerHTML = 'Stage.';
                     perTag.innerHTML = '확률';
@@ -81,8 +85,11 @@
                 
                 t.ing = function(){
                     guide.innerHTML = '둘중하나 선택.';
-                    stage++;
+                    oldStage = stage++;
+                    oldPer = round(100 / 2**(stage - 1), 10);
+                    console.log(oldPer);
                     const per = round(100 / 2**stage, 10);
+
                     stageTag.innerHTML = 'Stage.' + stage;
                     perTag.innerHTML = '확률 ' + per + '%';
 
@@ -101,8 +108,11 @@
                 }
 
                 t.result = function(){
+                    console.log(oldPer);
                     t.end = true;
                     t.wait = false;
+                    stageTag.innerHTML = 'Stage.' + oldStage;
+                    perTag.innerHTML = oldPer == 100 ? '확률 없음' : ('확률 ' + oldPer + '%');
                     guide.innerHTML = '게임이 끝났자나.';
                 }
             }
