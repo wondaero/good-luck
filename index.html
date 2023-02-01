@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <title>양자택일</title>
+        <link rel="stylesheet" href="assets/css/normalize.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+        
+        <style>
+            header{display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #333; color: #fff;}
+            header h1{margin : 0; padding: 0;}
+            header button{padding: 10px 20px; background: green; color: #fff;}
+            button{outline: 0; border: 0; border-radius: 8px;}
+
+            .btns button{
+                width: 100px; display: inline-flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box;
+                font-weight: 900; color: #333;
+            }
+            .btns button:nth-child(1){background: lightpink;}
+            .btns button:nth-child(2){background: plum;}
+
+            .wrapper{padding: 10px;}
+            .game-info{line-height: 1.5;}
+
+        </style>
+     </head>
+
+     <body>
+        <header>
+            <h1>양자택일</h1>
+            <button onclick="luck.startGame();">시작</button>
+        </header>
+        <div class="wrapper">
+            <h2 class="game-info">
+                <span id="stage">Stage.</span><br/><span id="percent">확률</span>
+            </h2>
+            <h2 id="guide">시작버튼 누르자.</h2>
+            <div class="btns">
+                <button onclick="luck.pick(0);">선택1</button>
+                <button onclick="luck.pick(1);">선택2</button>
+            </div>
+        </div>
+        <script>
+            function getRandomNum(mn, mx){return Math.floor(Math.random() * (mx - mn + 1)) + mn;};
+            const qs = function(t){return document.querySelector(t);}
+            const qsa = function(t){return document.querySelectorAll(t);}
+            const round = (num, digit) => Math.round(num * (10**digit)) / (10**digit);
+
+            const perTag = qs('#percent');
+            const stageTag = qs('#stage');
+            const guide = qs('#guide');
+
+            const luck = new Luck();
+
+            function Luck(){
+                const t = this;
+                
+                let rdmNum = 0; //접근 못하게
+                let stage = 0; //접근 못하게
+
+                t.init = function(){
+                    stage = 0;
+                    rdmNum = 0;
+
+                    stageTag.innerHTML = 'Stage.';
+                    perTag.innerHTML = '확률';
+                    guide.innerHTML = '시작버튼 누르자.';
+
+                    t.end = false;
+                    t.start = false;
+                }
+                
+                t.init();
+                
+                t.startGame = function(){
+                    t.init();
+                    t.start = true;
+                    t.ing();
+                }
+                
+                t.ing = function(){
+                    guide.innerHTML = '둘중하나 선택.';
+                    stage++;
+                    const per = round(100 / 2**stage, 10);
+                    stageTag.innerHTML = 'Stage.' + stage;
+                    perTag.innerHTML = '확률 ' + per + '%';
+
+                    rdmNum = getRandomNum(0, 1);
+                }
+
+                t.pick = function(pickedNum){
+                    if(t.end || !t.start) return;
+
+                    if(rdmNum == pickedNum) t.ing();
+                    else t.result();
+                }
+
+                t.result = function(){
+                    t.end = true;
+                    guide.innerHTML = '게임이 끝났자나.';
+                }
+            }
+        </script>
+     </body>
+</html>
